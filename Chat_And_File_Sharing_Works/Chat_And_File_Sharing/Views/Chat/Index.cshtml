@@ -1,0 +1,144 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+<div class="row">
+    <div class="col-12">
+        <div style="display:flex; justify-content:center">
+            <img src="~/Uploads/chat-svgrepo-com.svg" style="height:80px;width:80px;" />
+        </div>
+        <h3 style="text-align:center">Chat & File Share </h3>
+        <div>
+            <ul>
+                <li>Please,Share any file from (Sample Image) Folder only</li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+<div class="row" id="mconnect" style="display:none">
+    <div class="col-6 offset-3">
+        <div class="input-group">
+            <input type="text" id="divname" class="form-control" placeholder="display name" aria-label="display name">
+            <button class="btn btn-outline-secondary btn-sm" type="button" id="connect">Connect</button>
+        </div>
+    </div>
+
+</div>
+<div class="row" id="mchat" style="display:none">
+    <div class="col-3">
+        <h4>Users</h4>
+        <ul class="list-group" id="users">
+        </ul>
+    </div>
+    <div class="col-9">
+        <div class="row">
+            <div class="col-12">
+                Display name: <span id="name"></span>
+            </div>
+            <div class="col-12">
+                <div class="input-group">
+                    <input type="text" id="msg" class="form-control" placeholder="message" aria-label="message">
+                    <button class="btn btn-outline-secondary btn-sm" type="button" id="send">Send</button>
+                    <button class="btn btn-outline-secondary btn-sm" type="button" id="browse">Bewose</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <h4>Messages</h4>
+                <ul class="list-group" id="messages">
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 d-flex justify-content-start gap-1 flex-wrap" id="files">
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<input type="file" id="file" style="display:none" />
+@section scripts {
+    <script src="~/libs/signalr/signalr.js"></script>
+    <script src="~/libs/jquery/jquery.js"></script>
+    <script>
+        $(() => {
+            var con = new signalR.HubConnectionBuilder().withUrl("/chatWithFileShareHub").build();
+            var divname = "";
+            //con events
+            con.on('connected', m => {
+                $('#mconnect').show();
+            });
+            con.on('userlist', users => {
+                $("#mchat").show();
+                $("#mconnect").hide();
+                //console.log(users)
+                $("#users").empty();
+                users.forEach(u => {
+                    $("#users").append(`<li class="list-group-item">${u}</li>`)
+                });
+            });
+            con.on('message', (u, m) => {
+                $("#messages").append(`<li class="list-group-item">${u}: ${m}</li>`)
+            });
+            con.on('uploaded', (u, f, t) => {
+                console.log(`${f}-${t}`);
+                if (t == 'image') {
+                    $('#files').append(`<div class="card" style="width:200px">
+                                                                    <img src="/Uploads/${f}" class="card-img-top" alt="...">
+                                                                    <div class="card-body">
+                                                                        <h5 class="card-title">${f}</h5>
+                                                                        <p class="card-text">Uploaded by ${u}</p>
+                                                                  </div>
+                                                        </div>`)
+                }
+                else {
+                    $('#files').append(`<div class="card" style="width:200px">
+                                                                    <img src="/Uploads/doc.png" class="card-img-top" alt="...">
+                                                                            <div class="card-body">
+                                                                                <h5 class="card-title">${f}</h5>
+                                                                                <p class="card-text">Uploaded by ${u}</p>
+                                                                          </div>
+                                                                </div>`)
+                }
+
+            });
+            con.onerror = err => {
+                con.log(err);
+            }
+            // start con
+            con.start()
+                .then(() => {
+                    console.log('connected');
+                })
+                .catch(err => {
+                    console.log(err.toString());
+                });
+            // html element element
+            $('#connect').click(() => {
+                divname = $('#divname').val();
+                $('#name').html(divname);
+                con.invoke('UserJoin', divname);
+            });
+            $('#send').click(() => {
+                con.invoke('send', divname, $('#msg').val());
+                $("#messages").append(`<li class="list-group-item">You: ${$('#msg').val()}</li>`)
+                $('#msg').val('');
+            });
+            $('#browse').click(() => {
+                $("#file").trigger('click');
+            });
+            $("#file").change(() => {
+                var f = document.getElementById("file").files[0];
+                var reader = new FileReader();
+                reader.onloadend = function () {
+                    var data = { fileName: f.name, data: reader.result };
+                    //console.log(data);
+                    con.invoke("Upload", divname, data);
+                }
+                reader.readAsDataURL(f);
+            })
+        });
+    </script>
+}

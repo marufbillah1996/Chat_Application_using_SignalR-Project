@@ -1,0 +1,34 @@
+First Step
+
+
+ng new ClientApp --skip-tests
+
+cd ClientApp
+
+ng add @angular/material =>   angular.ai=no; others all yes
+
+ClientApp e theke code.
+
+code app open hole Tirminal open hole command promot option e jete hobe
+ClientApp/
+
+ng generate @angular/material:navigation components/common/navbar
+
+
+ng g m modules/mat-module
+
+ng serve -o ====> app will run
+
+
+Second Step
+
+
+ng g c components/home
+
+ng g interface models/data/product-model
+
+add constant.ts
+
+ng g s services/data/product  ===>add HttpClientModule  and  HttpClient,ProductService  on app.module.ts
+
+ng g c components/product/product-view

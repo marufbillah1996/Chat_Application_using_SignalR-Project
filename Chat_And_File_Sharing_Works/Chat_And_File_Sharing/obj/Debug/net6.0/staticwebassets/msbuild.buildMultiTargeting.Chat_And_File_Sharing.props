@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Chat_And_File_Sharing.props" />
+</Project>

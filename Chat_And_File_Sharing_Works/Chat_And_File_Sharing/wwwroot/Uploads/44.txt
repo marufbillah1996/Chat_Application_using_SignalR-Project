@@ -1,0 +1,5 @@
+1 model identify, class er shathe model thakbe, 
+2 naming convention ta set korte hobe
+3 middileware ta meaningfull hote hobe  ja te buja jay
+4 logical structure er shathe figical structure jeno mill thake
+5 

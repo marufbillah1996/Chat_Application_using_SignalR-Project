@@ -1,0 +1,42 @@
+﻿
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <environment include="Development">
+        <link rel="stylesheet" href="~/libs/bootstrap/css/bootstrap.css">
+        <script src="~/libs/bootstrap/js/bootstrap.bundle.js"></script>
+    </environment>
+
+    <style>
+        body {
+            padding-top: 70px;
+        }
+    </style>
+    @await RenderSectionAsync("styles", false)
+</head>
+<body>
+    <nav class="navbar navbar-light bg-light fixed-top navbar-expand-md  shadow-sm" style="background-image:linear-gradient(to right, blue ,lightblue)">
+        <div class="container-fluid">
+            <span class="navbar-brand" style="color:aliceblue">EXAM MID MONTHLY <sub>10</sub></span>
+            <div class="navbar-collapse collapse">
+                <ul class="navbar-nav nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Index" asp-controller="Home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Index" asp-controller="Chat">Chat</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        @RenderBody()
+    </div>
+    @await RenderSectionAsync("scripts", false)
+</body>
+</html>
